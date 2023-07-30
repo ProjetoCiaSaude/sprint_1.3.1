@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+
+{% block head_content %}
+
+  <!-- INLINE CSS -->
+    <style>
+    .btn.btn-primary {
+      background-color: #a9cf3c;
+      border: 2px solid #a9cf3c;
+    }
+    /* Estilos para o botão "Cadastrar" */
+  .cadastrar-button {
+    background-color: #a9cf3c;
+    border-color: #a9cf3c;
+    color: #fff;
+    transition: background-color 0.3s;
+  }
+
+  .cadastrar-button:hover {
+    background-color: #92b633;
+    border-color: #92b633;
+    color: #fff;
+  }
+
+  /* Estilos para o botão "Cancelar" */
+  .cancelar-button {
+    background-color: #a9cf3c;
+    border-color: #a9cf3c;
+    color: #fff;
+    transition: background-color 0.3s;
+  }
+
+  .cancelar-button:hover {
+    background-color: #92b633;
+    border-color: #92b633;
+    color: #fff;
+  }
+
+  /* Posicionamento dos botões */
+  .custom-button-container {
+    display: flex;
+    justify-content: space-between;
+  }
+    </style>
+
+{% endblock %}
+
+{% block body_content %}
+  <br>
+  <h3>Novo Tratamento</h3>
+  <br>
+
+  <form method="POST">
+
+    <!-- CAMPO: CPF -->
+    <div class="form-group">
+      <label for="cpf">CPF</label>
+      <input
+      type="text"
+      class="form-control"
+      id="cpf"
+      name="cpf"
+      required
+      />
+    </div>
+    
+    <!-- CAMPO: ESPECIALIDADE -->
+    <div class="form-group">
+      <label for="especialidade">Especialidade</label>
+      <input
+        type="text"
+        class="form-control"
+        id="especialidade"
+        name="especialidade"
+        placeholder="Insira a especialidade"
+        required
+      />
+    </div>
+    
+    <!-- CAMPO: PROFISSIONAL RESPONSAVEL -->  
+    <div class="form-group">
+      <label for="profissional_responsavel">Profissional Responsável</label>
+      <input
+        type="text"
+        class="form-control"
+        id="profissional_responsavel"
+        name="profissional_responsavel"
+        placeholder="Insira a especialidade"
+        required
+      />
+    </div>
+
+    <!-- LINHA: DATA INICIO, DATA FIM -->
+    <div class="row">
+
+        
+      <div class="col-sm">
+        <div class="form-group">
+          <label for="data_inicio">Data inicio</label>
+          <input
+          type="date"
+          class="form-control"
+          id="data_inicio"
+          name="data_inicio"
+          required
+          />
+        </div>
+      </div>
+      
+      <div class="col-sm">
+        <div class="form-group">
+          <label for="data_fim">Data fim</label>
+          <input
+          type="date"
+          class="form-control"
+          id="data_fim"
+          name="data_fim"
+          />
+        </div>
+      </div>
+      
+      
+    </div>
+    
+    <br>
+    
+    <!-- BOTOES: CANCELAR, CADASTRAR -->
+    <div class="col-sm custom-button-container">
+      <a href="/consulta-tratamentos" class="btn btn-primary custom-button cancelar-button">Cancelar</a>
+      <button type="submit" class="btn btn-primary custom-button cadastrar-button">Cadastrar</button>
+    </div>
+      
+  </form>
+{% endblock %}
