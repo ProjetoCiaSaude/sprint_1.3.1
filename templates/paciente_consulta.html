@@ -8,6 +8,11 @@
 
   <!-- CSS -->
     <style>
+       .imagem-esquerda {
+       float: left;
+       margin-right: 120px;
+       width: 250px; /* Defina o tamanho desejado para a imagem */
+      }   
         .pacientes_table {
             border-collapse: collapse;
             background: #FFFFF0;
@@ -303,8 +308,11 @@
 
 <!-- JINJA 2 - CONTEÚDO BODY -->
 {% block body_content %}
-
-  <h1>Consulta Pacientes</h1>
+<br>
+<div style="display: flex; align-items: center;">
+  <img class="imagem-esquerda" src="https://ciasaude.s3.amazonaws.com/LOGO+CIA+.jpg" alt="Logo da CIA Saúde">
+  <h3 style="font-size: 40px;">Lista de Paciente</h3>
+</div>
   <br>
   
   <!-- BOTÃO: NOVO -->

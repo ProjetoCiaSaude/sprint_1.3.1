@@ -3,7 +3,13 @@
 {% block head_content %}
 
   <!-- INLINE CSS -->
-    <style>
+    <style> 
+      .imagem-esquerda {
+       float: left;
+       margin-right: 150px;
+       width: 250px; /* Defina o tamanho desejado para a imagem */
+      }
+
       .pacientes_table th {
         background-color: #a9cf3c;
         position: sticky;
@@ -243,50 +249,77 @@
             document.getElementById("idade").value = "";
           } else {
             document.getElementById("idade").value = idade;
-            
-            var responsavelInput = document.getElementById("responsavel");
-            if (idade > 18) {
-              responsavelInput.disabled = true;
-              responsavelInput.value = ""; // Limpa o valor do campo responsável
-            } else {
-              responsavelInput.disabled = false;
-            }
           }
         }
       
         document.getElementById("data_nascimento").addEventListener("input", calcularIdade);
       </script>
-    
-    <!-- SCRIPT PARA REDIRECIONAR PARA PAGINA DE NOVO TRATAMENTO COM PARAMETROS NA URL -->
-    <script>
-      function transformarParaParametros(button) {
 
-        const cpf = document.getElementById("cpf").value
-        
-        // Construir os parâmetros da URL
-        const params = new URLSearchParams();
-        params.append("cpf", cpf);
-        
-        // Gerar a URL com os parâmetros
-        const url = `tratamento-paciente?${params.toString()}`;
-        
-        // Redirecionar para a outra página
-        window.location.href = url;
+    <!-- Responsável -->
+    <script>
+      function validarFormulario1() {
+        var idade = parseInt(document.getElementById('idade').value);
+        var responsavel = document.getElementById('responsavel').value;
+
+        if (isNaN(idade) || idade < 18) {
+          if (responsavel.trim() === "") {
+            alert('Menores de 18 anos precisam ter um responsável');
+            return false; // Impede o envio do formulário
+          }
+        }
+        // Se tudo estiver válido, o formulário será enviado
+        return true;
       }
     </script>
+
+    <!-- PLANO OBRIGATÓRIO -->
+    <script>
+      function checkPaymentMethod(event) {
+        event.preventDefault(); // Prevent form submission
+
+        const pagamentoSelect = document.getElementById('pagamento');
+        const empresaField = document.getElementById('empresa');
+        const carteirinhaField = document.getElementById('numero_carteirinha');
+        const planoField = document.getElementById('plano');
+        const errorMessage = document.getElementById('error-message');
+
+        if (pagamentoSelect.value === 'plano') {
+          empresaField.required = true;
+          carteirinhaField.required = true;
+          planoField.required = true;
+          errorMessage.style.display = 'none';
+        } else if (pagamentoSelect.value === 'selecione') {
+          empresaField.required = false;
+          carteirinhaField.required = false;
+          planoField.required = false;
+          errorMessage.style.display = 'block';
+        } else {
+          empresaField.required = false;
+          carteirinhaField.required = false;
+          planoField.required = false;
+          errorMessage.style.display = 'none';
+          // If needed, you can reset the form here: event.target.reset();
+        }
+      }
+    </script>
+
 {% endblock %}
 
 {% block body_content %}
 
   <br> <!-- breakrow -->
 
-  <!-- CABEÇALHO DA PAGINA -->
-  <h3>Novo Paciente</h3>
+  <!-- CABEÇALHO DA PÁGINA -->
+  <div style="display: flex; align-items: center;">
+    <img class="imagem-esquerda" src="https://ciasaude.s3.amazonaws.com/LOGO+CIA+.jpg" alt="Logo da CIA Saúde">
+    <h3>Novo Paciente</h3>
+  </div>
 
   <br> <!-- breakrow -->
 
   <!-- FOMULARIO -->
-  <form method="POST">
+  <!-- <form onsubmit="return validarFormulario1(); checkPaymentMethod()" method="post"> -->
+  <form method="post">
 
     <!-- CAMPO: NOME -->
     <div class="form-group">
@@ -334,7 +367,7 @@
       </div>
 
       <div class="col-sm-3">
-        <label for="cpf">CPF</label>
+        <label for="cpf">CPF/CPF do responsável</label>
         <input
           type="text"
           class="form-control"
@@ -402,13 +435,9 @@
       <div class="col-sm">
         <div class="form-group">
           <label for="responsavel">Responsável</label>
-          <input
-          type="text"
-          class="form-control"
-          id="responsavel"
-          name="responsavel"
-          placeholder="Insira o nome do responsável"
-          /></div>
+          <input type="text" class="form-control" id="responsavel" name="responsavel" placeholder="Insira o nome do responsável" />
+          <div id="responsavel-error" style="color: red;"></div> <!-- Div para exibir o erro -->
+        </div>
       </div>
 
     </div>
@@ -478,24 +507,23 @@
 
     <!-- LINHA: FORMA DE PAGAMENTO, EMPRESA, N.CARTEIRINHA, PLANO -->
     <div class="row">
-      
-      <div class="col-sm">
-        <div class="form-group">
-          <label for="pagamento">Forma de pagamento:</label>
-          <br>
-          <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="pagamento" id="pagamento">
-            <option selected>Selecione uma opção</option>
-            <option value="plano">Plano</option>
-            <option value="particular">Particular</option>
-          </select>
+    <div class="col-sm">
+      <div class="form-group">
+        <label for="pagamento">Forma de pagamento:</label>
+        <br>
+        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="pagamento" id="pagamento" onchange="checkPaymentMethod()">
+          <option selected>Selecione uma opção</option>
+          <option value="plano">Plano</option>
+          <option value="particular">Particular</option>
+        </select>
         </div>
-      </div>
-      
-      <div class="col-sm">
+        </div>
+          
+        <div class="col-sm">
         <div class="form-group">
           <label for="empresa">Empresa:</label>
           <br>
-          <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="empresa" id="empresa">
+          <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="empresa" id="empresa" required>
             <option selected>Selecione uma opção</option>
             <option value="amil">Amil</option>
             <option value="bradesco">Bradesco</option>
@@ -505,27 +533,31 @@
           </select>
         </div>
       </div>
-
+      
       <div class="col-sm">
         <div class="form-group">
           <label for="numero_carteirinha">N. carteirinha</label>
           <input
-          type="text"
-          class="form-control"
-          id="numero_carteirinha"
-          name="numero_carteirinha"
-          /></div>
+            type="text"
+            class="form-control"
+            id="numero_carteirinha"
+            name="numero_carteirinha"
+            required
+          />
+        </div>
       </div>
-
+      
       <div class="col-sm">
         <div class="form-group">
           <label for="plano">Plano</label>
           <input
-          type="text"
-          class="form-control"
-          id="plano"
-          name="plano"
-          /></div>
+            type="text"
+            class="form-control"
+            id="plano"
+            name="plano"
+            required
+          />
+        </div>
       </div>
 
     </div>
@@ -533,13 +565,13 @@
     <hr> <!-- horizontal line -->
     <br> <!-- break row -->
 
-    <!-- CAMPO: DOCUMENTO DE ENCAMINHAMENTO -->
+    <!-- CAMPO: DOCUMENTO DE ENCAMINHAMENTO
     <div class="col-sm custom-div">
       <div class="form-group">
         <label for="anexo">Documento de encaminhamento</label>
         <input type="file" class="form-control-file" id="anexo">
       </div>
-    </div>  
+    </div>   -->
   
     <br> <!-- break row -->
     <br> <!-- break row -->
@@ -547,7 +579,7 @@
     <!-- BOTÕES: CANCELAR E CADASTRAR -->
     <div class="col-sm custom-button-container">
       <a href="/consulta-pacientes" class="btn btn-primary custom-button cancelar-button">Cancelar</a>
-      <button type="submit" class="btn btn-primary custom-button cadastrar-button" onclick="transformarParaParametros()">Avançar</button>
+      <button type="submit" class="btn btn-primary custom-button cadastrar-button">Avançar</button>
     </div>  
     
     <br><br>

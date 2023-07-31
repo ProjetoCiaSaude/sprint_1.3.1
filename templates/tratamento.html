@@ -4,6 +4,11 @@
 
   <!-- INLINE CSS -->
     <style>
+    .imagem-esquerda {
+       float: left;
+       margin-right: 150px;
+       width: 250px; /* Defina o tamanho desejado para a imagem */
+      }
     .btn.btn-primary {
       background-color: #a9cf3c;
       border: 2px solid #a9cf3c;
@@ -47,10 +52,26 @@
 
 {% block body_content %}
   <br>
-  <h3>Novo Tratamento</h3>
+  <div style="display: flex; align-items: center;">
+    <img class="imagem-esquerda" src="https://ciasaude.s3.amazonaws.com/LOGO+CIA+.jpg" alt="Logo da CIA Saúde">
+    <h3>Novo tratamento</h3>
+  </div>
   <br>
 
   <form method="POST">
+
+    <!-- CAMPO: NOME -->
+    <div class="form-group">
+      <label for="nome">Nome</label>
+      <input
+        type="text"
+        class="form-control"
+        id="nome"
+        name="nome"
+        placeholder="Insira o nome completo"
+        required
+      />
+    </div>
 
     <!-- CAMPO: CPF -->
     <div class="form-group">
@@ -60,6 +81,7 @@
       class="form-control"
       id="cpf"
       name="cpf"
+      placeholder="Insira o CPF"
       required
       />
     </div>

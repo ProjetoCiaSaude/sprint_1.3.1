@@ -3,6 +3,11 @@
 {% block head_content %}
   <!-- CSS -->
     <style>
+       .imagem-esquerda {
+        float: left;
+        margin-right: 150px;
+        width: 250px; /* Defina o tamanho desejado para a imagem */
+       }
         .pacientes_table th {
           background-color: #a9cf3c;
           position: sticky;
@@ -70,7 +75,39 @@
           background-color: #a9cf3c;
           border: 2px solid #a9cf3c;
         }
-        
+          /* Estilos para o botão "Cadastrar" */
+    .cadastrar-button {
+      background-color: #a9cf3c;
+      border-color: #a9cf3c;
+      color: #fff;
+      transition: background-color 0.3s;
+    }
+
+    .cadastrar-button:hover {
+      background-color: #92b633;
+      border-color: #92b633;
+      color: #fff;
+    }
+
+    /* Estilos para o botão "Cancelar" */
+    .cancelar-button {
+      background-color: #a9cf3c;
+      border-color: #a9cf3c;
+      color: #fff;
+      transition: background-color 0.3s;
+    }
+
+    .cancelar-button:hover {
+      background-color: #92b633;
+      border-color: #92b633;
+      color: #fff;
+    }
+
+    /* Posicionamento dos botões */
+    .custom-button-container {
+      display: flex;
+      justify-content: space-between;
+    }
     </style>
 
   <!-- SCRIPTS -->
@@ -79,6 +116,7 @@
       <script>
         window.onload = function() {
             const queryParams = new URLSearchParams(window.location.search);
+            const nome = queryParams.get("nome");
             const cpf = queryParams.get("cpf");
             const especialidade = queryParams.get("especialidade");
             const profissional_responsavel = queryParams.get("profissional_responsavel");
@@ -86,6 +124,7 @@
             const data_fim = queryParams.get("data_fim");
 
 
+            document.getElementById("nome").value = nome;
             document.getElementById("cpf").value = cpf;
             document.getElementById("especialidade").value = especialidade;
             document.getElementById("profissional_responsavel").value = profissional_responsavel;
@@ -98,11 +137,27 @@
 
 {% block body_content %}
 <br>
-<h3>Editar Tratamento</h3>
+<div style="display: flex; align-items: center;">
+  <img class="imagem-esquerda" src="https://ciasaude.s3.amazonaws.com/LOGO+CIA+.jpg" alt="Logo da CIA Saúde">
+  <h3>Editar Tratamentos</h3>
+</div>
 <br>
 
 <!-- FORMULARIO -->
 <form method="POST">
+
+    <!-- CAMPO: NOME -->
+    <div class="form-group">
+      <label for="cpf">Nome</label>
+      <input
+        type="text"
+        class="form-control"
+        id="nome"
+        name="nome"
+        required
+        disabled
+        />
+    </div>
 
     <!-- CAMPO: CPF -->
     <div class="form-group">
@@ -180,8 +235,10 @@
     <br>
 
     <!-- BOTOES: CADASTRAR, CANCELAR -->
-    <button type="submit" class="btn btn-primary">Cadastrar</button>
-    <a href="/consulta-tratamentos" class="btn btn-primary">Cancelar</a>
+    <div class="col-sm custom-button-container">
+      <a href="/consulta-pacientes" class="btn btn-primary custom-button cancelar-button">Cancelar</a>
+      <button type="submit" class="btn btn-primary custom-button cadastrar-button">Salvar</button>
+    </div>  
     
 </form>
 {% endblock %}

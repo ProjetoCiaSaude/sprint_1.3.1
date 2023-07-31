@@ -1,9 +1,10 @@
 #################################################################################################
 ############################################ IMPORTS ############################################
 #################################################################################################
-from functions import login_func, paciente_novo, tratamento_novo, pacientes_tabela, tratamentos_tabela
-from flask import Flask, render_template, request, redirect, session, flash
+from functions import login_func, paciente_novo, tratamento_novo, pacientes_tabela, tratamentos_tabela, tratamento_edit, duplicidade_cpf, duplicidade_cpf_e_nome
+from flask import Flask, render_template, request, redirect, session, flash, url_for
 from bd import bd_pacientes, bd_tratamentos
+import jsonify
 import os
 
 
@@ -43,6 +44,7 @@ def logout():
 
 
 
+############################################## PACIENTE ################################################
 
 #########################################
 ########### CONSULTA PACIENTE ###########
@@ -57,22 +59,31 @@ def consulta_pacientes():
 
     return render_template('paciente_consulta.html', headings=headings, pacientes=pacientes)
 
-################################
-########### PACIENTE ###########
-################################
+#####################################
+########### NOVO PACIENTE ###########
+#####################################
 @app.route('/paciente', methods = ['GET', 'POST'])
 def paciente():
 
     if request.method == 'POST':
 
-        paciente = request.form # pega dos dados do formulario
+        form = request.form # pega dos dados do formulario
+        response = paciente_novo(form) # tranforma os dados em um dict
+        cpf = response['cpf'] # cpf do form
+        nome = response['nome']
 
-        response = paciente_novo(paciente) # tranforma os dados em um dict
-        bd_pacientes.insert_one(response) # insere um unico paciente no bd
+        duplicidade = duplicidade_cpf_e_nome(cpf, nome)
 
-        flash('Paciente cadastrado com sucesso!', category='success') # exibe msg no front de sucesso de cadastro
-        return redirect('/tratamento-paciente') # faz o redirect para a pagina tratamento-paciente (para fazer um tratamento obrigatorio atrelado ao paciente recem criado)
-    
+        if duplicidade == True:
+            flash("Nome e CPF já está em uso", category="error")
+            return redirect(url_for('paciente'))  # faz o redirect para a pagina tratamento-paciente junto com o dado do cpf (para fazer um tratamento obrigatorio atrelado ao paciente recem criado)
+
+        else:
+            bd_pacientes.insert_one(response)
+            flash("Paciente cadastrado", category="succsses")
+
+        return redirect(url_for('tratamento_paciente', cpf=cpf, nome=nome))  # faz o redirect para a pagina tratamento-paciente junto com o dado do cpf (para fazer um tratamento obrigatorio atrelado ao paciente recem criado)
+
     return render_template('paciente.html')
 
 #######################################
@@ -104,11 +115,50 @@ def paciente_editar():
             flash('Paciente não editado.', category='error') # exibe msg no front de sucesso de cadastro
         
         return redirect('/consulta-pacientes')
-        
-
+    
     return render_template('paciente_editar.html')
 
 
+############################################## PACIENTE/TRATAMENTO ################################################
+
+###########################################
+########### TRATAMENTO-PACIENTE ###########
+###########################################
+@app.route('/tratamento-paciente', methods = ['GET','POST'])
+def tratamento_paciente():
+    '''
+    este é o tratamento que é carregado logo após o cadastro de um novo paciente.
+    pois um tratamento é requerido caso um paciente seja cadastrado.
+    '''
+
+    cpf = request.args.get('cpf')  # pega o cpf da url
+
+    if request.method == 'POST':
+
+        # tranforma o retorno do post form em um dict
+        tratamento_dict = request.form.to_dict()
+
+        # Inserir o novo usuário no banco de dados
+        bd_tratamentos.insert_one(tratamento_dict)
+
+        flash('Tratamento cadastrado com sucesso!', category='success')
+        return redirect('/consulta-tratamentos')
+
+    return render_template('tratamento_sync_paciente.html', cpf=cpf)
+
+
+
+
+
+
+
+
+
+
+
+
+
+############################################## TRATAMENTO ################################################
 
 ###########################################
 ########### CONSULTA TRATAMENTO ###########
@@ -123,9 +173,9 @@ def consulta_tratamentos():
 
     return render_template('tratamento_consulta.html', headings=headings, tratamentos=tratamentos)
 
-##################################
-########### TRATAMENTO ###########
-##################################
+#######################################
+########### NOVO TRATAMENTO ###########
+#######################################
 @app.route('/tratamento', methods = ['GET', 'POST'])
 def tratamento():
 
@@ -133,6 +183,9 @@ def tratamento():
         tratamento = request.form
 
         response = tratamento_novo(tratamento)
+
+        print(response)
+  
         bd_tratamentos.insert_one(response)    
 
         flash('Tratamento cadastrado com sucesso!', category='success')
@@ -150,7 +203,7 @@ def tratamento_editar():
 
         # novos dados do form para update do usuário
         form = request.form
-        dados_form = tratamento_novo(form)
+        dados_form = tratamento_edit(form)
 
         # criação de variaveis para o find_one_and_update do pymongo
         dados_url = request.args # argumento 'cpf' passa na url
@@ -166,34 +219,15 @@ def tratamento_editar():
             flash('Tratamento editado com sucesso.', category='success') # exibe msg no front de sucesso de cadastro
             update
         else:
-            flash('Tratanebti não editado.', category='error') # exibe msg no front de sucesso de cadastro
+            flash('Tratamento não editado.', category='error') # exibe msg no front de sucesso de cadastro
         
         return redirect('/consulta-tratamentos')
 
     return render_template('tratamento_editar.html')
 
-###########################################
-########### TRATAMENTO-PACIENTE ###########
-###########################################
-@app.route('/tratamento-paciente', methods = ['GET','POST'])
-def tratamento_paciente():
-    '''
-    este é o tratamento que é carregado logo após o cadastro de um novo paciente.
-    pois um tratamento é requerido caso um paciente seja cadastrado.
-    '''
 
-    if request.method == 'POST':
 
-        # tranforma o retorno do post form em um dict
-        tratamento_dict = request.form.to_dict()
 
-        # Inserir o novo usuário no banco de dados
-        bd_tratamentos.insert_one(tratamento_dict)
-
-        flash('Tratamento cadastrado com sucesso!', category='success')
-        return redirect('/consulta-tratamentos')
-
-    return render_template('tratamento_sync_paciente.html')
 
 
 

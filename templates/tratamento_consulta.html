@@ -8,6 +8,11 @@
 
   <!-- CSS -->
     <style>
+      .imagem-esquerda {
+       float: left;
+       margin-right: 120px;
+       width: 250px; /* Defina o tamanho desejado para a imagem */
+      }   
         .tratamento_table {
             border-collapse: collapse;
             background: #FFFFF0;
@@ -177,14 +182,16 @@
           const cells = row.querySelectorAll("td");
           
           // Extrair os valores das células da linha
-          const cpf = cells[1].textContent;
-          const especialidade = cells[2].textContent;
-          const profissional_responsavel = cells[3].textContent;
-          const data_inicio = cells[4].textContent;
-          const data_fim = cells[5].textContent;
+          const nome = cells[1].textContent;
+          const cpf = cells[2].textContent;
+          const especialidade = cells[3].textContent;
+          const profissional_responsavel = cells[4].textContent;
+          const data_inicio = cells[5].textContent;
+          const data_fim = cells[6].textContent;
           
           // Construir os parâmetros da URL
           const params = new URLSearchParams();
+          params.append("nome", nome);
           params.append("cpf", cpf);
           params.append("especialidade", especialidade);
           params.append("profissional_responsavel", profissional_responsavel);
@@ -279,8 +286,13 @@
 {% endblock %}
 
 {% block body_content %}
+  <br>
 
-  <h1>Consulta Tratamentos</h1>
+  <div style="display: flex; align-items: center;">
+    <img class="imagem-esquerda" src="https://ciasaude.s3.amazonaws.com/LOGO+CIA+.jpg" alt="Logo da CIA Saúde">
+    <h3 style="font-size: 40px;">Lista de Tratamentos</h3>
+  </div>
+  
   <br>
 
   <!-- FILTRO DE PESQUISA -->
@@ -306,6 +318,7 @@
     <thead>
       <tr>
         <th>Selecionar</th>
+        <th>Nome</th>
         <th>CPF</th>
         <th>Especialidade</th>
         <th>Profissional Responsável</th>

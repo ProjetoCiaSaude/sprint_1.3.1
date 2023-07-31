@@ -8,6 +8,20 @@
         border: 2px solid #a9cf3c;
       }
     </style>
+
+  <!-- SCRIPTS -->
+    
+    <!-- CARREGAR DADOS DA URL -->
+      <script>
+        window.onload = function() {
+            const queryParams = new URLSearchParams(window.location.search);
+            const nome = queryParams.get("nome");
+            const cpf = queryParams.get("cpf");
+
+            document.getElementById("nome").value = nome;
+            document.getElementById("cpf").value = cpf;
+        };
+      </script>
 {% endblock %}
 
 {% block body_content %}
@@ -19,13 +33,23 @@
     
     <!-- CAMPO: CPF -->
     <div class="form-group">
+      <label for="cpf">Nome</label>
+      <input
+        type="text"
+        class="form-control"
+        id="nome"
+        name="nome"
+        />
+    </div>
+    
+    <!-- CAMPO: CPF -->
+    <div class="form-group">
       <label for="cpf">CPF</label>
       <input
         type="text"
         class="form-control"
         id="cpf"
         name="cpf"
-        disabled
         />
     </div>
 
